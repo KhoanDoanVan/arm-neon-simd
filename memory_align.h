@@ -259,6 +259,43 @@ static inline void neon_fill_f32(float* ALIGN_NEON dst, float value, size_t size
 
 
 
+// ALIGNMENT CHECK UTILITIES
+/**
+ * Check if pointer is aligned
+*/
+static inline int is_aligned(const void* ptr, size_t alignment) {
+    return ((uintptr_t)ptr % alignment) == 0;
+}
+
+
+/**
+ * Check if pointer is NEON-aligned (16-byte)
+*/
+static inline int is_neon_aligned(const void* ptr) {
+    return is_aligned(ptr, NEON_ALIGNMENT);
+}
+
+
+/**
+ * Get misalignment offset
+ * Return số bytes cần để ptr align đúng
+*/
+static inline size_t get_alignment_offset(const void* ptr, size_t alignment) {
+    uintptr_t addr = (uintptr_t)ptr;
+    size_t remainder = addr % alignment;
+    return remainder == 0 ? 0 : (alignment - remainder);
+}
+
+
+/**
+ * Align pointer up to next boundary
+ */
+static inline void* align_pointer(void* ptr, size_t alignment) {
+    uintptr_t addr = (uintptr_t)ptr;
+    uintptr_t aligned = (addr + alignment - 1) & ~(alignment - 1);
+    return (void*)aligned;
+}
+
 
 #ifdef __cplusplus
 }
